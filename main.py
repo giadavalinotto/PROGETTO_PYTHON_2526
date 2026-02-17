@@ -68,3 +68,4 @@ matrice[end[0]][end[1]] = 0 # imposto il punto di arrivo come libero (0) nella m
 # Stampa per verificare
 for riga in matrice: # ciclo for per ogni riga della matrice
     print(riga) # stampo la matrice per verificare che i punti di partenza e arrivo siano stati impostati correttamente come liberi (0) e che gli ostacoli siano stati generati casualmente in base alla probabilità specificata
+
