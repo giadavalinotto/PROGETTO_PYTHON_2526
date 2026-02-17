@@ -1,40 +1,66 @@
+# LIBRERIE
 import random
 
+# FUNZIONI
+def chiedi_dimensione_matrice():
+    while True:
+        try:
+            N = int(input("Inserisci la dimensione N della matrice: "))
+            if N > 0:
+                return N
+            else:
+                print("Inserisci un numero intero positivo.")
+        except ValueError:
+            print("Input non valido. Inserisci un numero intero positivo.")
+    return N
+
+def crea_matrice(N, prob_ostacolo):
+    matrice = []  # inizializzo la matrice vuota
+    for riga in range(N):  # ciclo for per ogni riga della matrice
+        riga_corrente = []  # inizializzo la riga corrente vuota
+        for colonna in range(N):  # ciclo for per ogni colonna della matrice
+            if random.random() < prob_ostacolo:  # se il numero casuale (tra 0 e 1) è inferiore alla probabilità di ostacolo
+                riga_corrente.append(1)  # inserisco un ostacolo in questa posizione
+            else:
+                riga_corrente.append(0)  # la casella è libera
+        matrice.append(riga_corrente)  # aggiungo la riga corrente alla matrice
+    return matrice  # restituisco la matrice generata
+
+def leggi_coordinata(N, messaggio):
+    while True:
+        try:
+            valore = int(input(messaggio))
+            if 0 <= valore < N:
+                return valore
+            else:
+                print("Inserisci un numero compreso tra 0 e " + str(N-1))
+        except ValueError:
+            print("Inserisci un numero intero valido")
+
+# MAIN
 prob_ostacolo = 0.3  # 30% di probabilità che una casella sia un ostacolo
 
-while True: # ciclo infinito finché l'utente non inserisce un input valido
-    try:
-        N = int(input("Inserisci la dimensione N della matrice: ")) # l'utente inserisce la dimensione della matrice, che viene convertita in un intero
-        if N <= 0: # se l'utente inserisce un numero non positivo, viene sollevata un'eccezione
-            raise ValueError("Inserisci un numero intero positivo.") # raise solleva un'eccezione con un messaggio di errore personalizzato
-        break # se l'input è valido, esco dal ciclo
-    except ValueError: # se viene sollevata un'eccezione di tipo ValueError (ad esempio, se l'utente inserisce un valore non numerico o un numero negativo), viene stampato un messaggio di errore e il ciclo continua a chiedere un nuovo input
-        print("Input non valido. Inserisci un numero intero positivo.")
-
-matrice = []  # inizializzo la matrice vuota
-prob_ostacolo = 0.3  # 30% di probabilità che una casella sia un ostacolo
-
-for riga in range(N): # ciclo for per ogni riga della matrice
-    riga_corrente = [] # inizializzo la riga corrente vuota
-    for colonna in range(N): # ciclo for per ogni colonna della matrice
-        if random.random() < prob_ostacolo: # se il numero casuale (tra 0 e 1) è inferiore alla probabilità di ostacolo
-            riga_corrente.append(1)  # inserisco un ostacolo in questa posizione
-        else:
-            riga_corrente.append(0)  # la casella è libera
-    matrice.append(riga_corrente) # aggiungo la riga corrente alla matrice
+N = chiedi_dimensione_matrice()
+matrice = crea_matrice(N, prob_ostacolo)
 
 for riga in matrice:
     print(riga)
 
 # Chiedo all'utente le coordinate del punto di partenza
-start_row = int(input("Inserisci la riga del punto di partenza (0-9): ")) # l'utente inserisce la riga del punto di partenza, che viene convertita in un intero
-start_col = int(input("Inserisci la colonna del punto di partenza (0-9): ")) # l'utente inserisce la colonna del punto di partenza, che viene convertita in un intero
-start = (start_row, start_col) # creo una tupla con le coordinate del punto di partenza
+start_row = leggi_coordinata(N, "Inserisci la riga del punto di partenza: ")
+start_col = leggi_coordinata(N, "Inserisci la colonna del punto di partenza: ")
+start = (start_row, start_col)
 
-# Chiedi all'utente le coordinate del punto di arrivo
-end_row = int(input("Inserisci la riga del punto di arrivo (0-9): ")) # l'utente inserisce la riga del punto di arrivo, che viene convertita in un intero
-end_col = int(input("Inserisci la colonna del punto di arrivo (0-9): ")) # l'utente inserisce la colonna del punto di arrivo, che viene convertita in un intero
-end = (end_row, end_col) # creo una tupla con le coordinate del punto di arrivo
+# Chiedo all'utente le coordinate del punto di arrivo
+while True:
+    end_row = leggi_coordinata(N, "Inserisci la riga del punto di arrivo: ")
+    end_col = leggi_coordinata(N, "Inserisci la colonna del punto di arrivo: ")
+    end = (end_row, end_col)
+
+    if end != start:
+        break
+    else:
+        print("Il punto di arrivo non può coincidere con il punto di partenza.")
 
 # Imposto i valori nella matrice
 matrice[start[0]][start[1]] = 0 # imposto il punto di partenza come libero (0) nella matrice
@@ -43,6 +69,3 @@ matrice[end[0]][end[1]] = 0 # imposto il punto di arrivo come libero (0) nella m
 # Stampa per verificare
 for riga in matrice:
     print(riga)
-
-    #TODO implementare il controllo per verificare che le coordinate inserite siano valide (che non siano fuori dai limiti della matrice o che l'input non sia un numero) --> sotto forma di funzione
-    #TODO controllare se parti di codice possono diventare delle funzioni per rendere il codice più modulare e leggibile (ad esempio, la generazione della matrice, la stampa della matrice, la validazione dell'input)
