@@ -1,5 +1,8 @@
 # LIBRERIE
 import random
+import matplotlib.pyplot as plt
+import numpy as np
+
 
 # FUNZIONI
 def chiedi_dimensione_matrice(): # funzione per chiedere all'utente la dimensione N della matrice
@@ -12,7 +15,7 @@ def chiedi_dimensione_matrice(): # funzione per chiedere all'utente la dimension
                 print("Inserisci un numero intero positivo.") # stampo un messaggio di errore se l'utente inserisce un numero non positivo
         except ValueError: # se l'utente inserisce un input che non può essere convertito in un intero, stampo un messaggio di errore e continuo a chiedere
             print("Input non valido. Inserisci un numero intero positivo.") # stampo un messaggio di errore se l'utente inserisce un input non valido (ad esempio, una stringa o un numero decimale)
-    return N
+        return N
 
 def crea_matrice(N, prob_ostacolo): # funzione per creare una matrice N x N con ostacoli generati casualmente in base alla probabilità specificata
     matrice = []  # inizializzo la matrice vuota
@@ -37,14 +40,84 @@ def leggi_coordinata(N, messaggio): # funzione per leggere una coordinata (riga 
         except ValueError: # se l'utente inserisce un input che non può essere convertito in un intero, stampo un messaggio di errore e continuo a chiedere
             print("Inserisci un numero intero valido") # stampo un messaggio di errore se l'utente inserisce un input non valido (ad esempio, una stringa o un numero decimale)
 
+
+def bfs_lista(matrice, start, end): # funzione per eseguire la ricerca in ampiezza (BFS) utilizzando una lista come coda, per trovare un percorso da start a end
+    N = len(matrice) # ottengo la dimensione della matrice
+    movimenti = [(-1, 0), (1, 0), (0, -1), (0, 1), (-1, -1), (-1, 1), (1, -1), (1, 1)] # lista dei movimenti possibili (8 direzioni: su, giù, sinistra, destra e diagonali)
+    coda = [start]  # lista che funge da coda per la BFS, inizialmente contiene solo il nodo di partenza
+    visitati = [start]  # lista dei nodi già visitati, inizialmente contiene solo il nodo di partenza
+    predecessore = {}  # dizionario per tenere traccia del predecessore di ogni nodo visitato per ricostruire il percorso alla fine
+
+    while coda: # finché la coda non è vuota
+        nodo_corrente = coda.pop(0)  # prendo il primo nodo dalla coda (FIFO)
+        if nodo_corrente == end:  # se il nodo corrente è il nodo di arrivo, ricostruisco il percorso usando il dizionario dei predecessori
+            percorso = [] # lista per memorizzare il percorso trovato
+            while nodo_corrente != start: # finché il nodo corrente non è il nodo di partenza, aggiungo il nodo corrente al percorso e aggiorno il nodo corrente al suo predecessore
+                percorso.append(nodo_corrente) # aggiungo il nodo corrente al percorso
+                nodo_corrente = predecessore[nodo_corrente] # aggiorno il nodo corrente al suo predecessore
+            percorso.append(start) # aggiungo il nodo di partenza al percorso
+            percorso.reverse() # inverto il percorso per avere l'ordine corretto da start a end
+            return percorso # restituisco il percorso trovato
+
+        riga, col = nodo_corrente # scompongo il nodo corrente nelle sue coordinate (riga e colonna)
+        for dr, dc in movimenti: # ciclo for per ogni possibile movimento (dr, dc) nella lista dei movimenti
+            nuova_riga = riga + dr # calcolo la nuova riga dopo aver applicato il movimento dr al nodo corrente
+            nuova_col = col + dc # calcolo la nuova colonna dopo aver applicato il movimento dc al nodo corrente
+            nuovo_nodo = (nuova_riga, nuova_col) # creo una tupla nuovo_nodo che rappresenta le coordinate del nuovo nodo dopo aver applicato il movimento al nodo corrente
+            if 0 <= nuova_riga < N and 0 <= nuova_col < N: # se le nuove coordinate sono valide (cioè all'interno dei limiti della matrice)
+                if matrice[nuova_riga][nuova_col] == 0 and nuovo_nodo not in visitati: # se la casella corrispondente al nuovo nodo è libera (0) e il nuovo nodo non è già stato visitato
+                    coda.append(nuovo_nodo) # aggiungo il nuovo nodo alla coda per essere visitato in futuro
+                    visitati.append(nuovo_nodo) # aggiungo il nuovo nodo alla lista dei nodi visitati per evitare di visitarlo nuovamente in futuro
+                    predecessore[nuovo_nodo] = nodo_corrente # aggiorno il dizionario dei predecessori per indicare che il predecessore del nuovo nodo è il nodo corrente per poter ricostruire il percorso alla fine
+
+    return None  # se la coda si svuota senza trovare il nodo di arrivo, restituisco None per indicare che non esiste un percorso da start a end
+
+def visualizza_percorso(matrice, percorso, start, end):
+    """
+    Visualizza graficamente la matrice con il percorso trovato,
+    con start/end in viola e percorso in lilla.
+    """
+    N = len(matrice)
+    array = np.array(matrice)
+
+    # Creo un array RGB per i colori
+    colori = np.zeros((N, N, 3))
+    for r in range(N):
+        for c in range(N):
+            if array[r, c] == 1:
+                colori[r, c] = [0, 0, 0]      # nero = ostacolo
+            else:
+                colori[r, c] = [1, 1, 1]      # bianco = cella libera
+
+    # Evidenzio il percorso in lilla
+    if percorso:
+        for r, c in percorso:
+            if (r, c) != start and (r, c) != end:
+                colori[r, c] = [0.8, 0.6, 1]  # lilla
+
+    # Evidenzio start e end in viola
+    colori[start[0], start[1]] = [0.6, 0, 0.6]  # viola
+    colori[end[0], end[1]] = [0.6, 0, 0.6]      # viola
+
+    # Visualizzazione
+    plt.figure(figsize=(8,8))
+    plt.imshow(colori, origin='upper')
+
+    # Griglia e dettagli estetici
+    plt.xticks(range(N))
+    plt.yticks(range(N))
+    plt.grid(color='gray', linestyle='-', linewidth=1)
+    plt.title("Percorso trovato", fontsize=16)
+    plt.show()
+
 # MAIN
 prob_ostacolo = 0.3  # 30% di probabilità che una casella sia un ostacolo
 
 N = chiedi_dimensione_matrice() # chiedo all'utente la dimensione N della matrice
 matrice = crea_matrice(N, prob_ostacolo) # creo la matrice N x N con ostacoli generati casualmente in base alla probabilità specificata
 
-#for riga in matrice:
-#    print(riga)
+for riga in matrice:
+    print(riga)
 
 # Chiedo all'utente le coordinate del punto di partenza
 start_row = leggi_coordinata(N, "Inserisci la riga del punto di partenza: ") # chiedo all'utente di inserire la riga del punto di partenza utilizzando la funzione leggi_coordinata, che assicura che l'input sia un numero intero valido compreso tra 0 e N-1
@@ -69,3 +142,12 @@ matrice[end[0]][end[1]] = 0 # imposto il punto di arrivo come libero (0) nella m
 for riga in matrice: # ciclo for per ogni riga della matrice
     print(riga) # stampo la matrice per verificare che i punti di partenza e arrivo siano stati impostati correttamente come liberi (0) e che gli ostacoli siano stati generati casualmente in base alla probabilità specificata
 
+percorso = bfs_lista(matrice, start, end) # chiamo la funzione bfs_lista per eseguire la ricerca in ampiezza (BFS) utilizzando una lista come coda, passando la matrice, il punto di partenza e il punto di arrivo come argomenti, e memorizzo il risultato nella variabile percorso
+
+if percorso: # se la variabile percorso contiene un percorso valido (cioè non è None), stampo il percorso trovato
+    print("Percorso trovato:") # stampo un messaggio per indicare che è stato trovato un percorso
+    print(percorso) # stampo il percorso trovato, che è una lista di tuple che rappresentano le coordinate dei nodi attraversati dal punto di partenza al punto di arrivo
+else: # se la variabile percorso è None, significa che non esiste un percorso valido tra il punto di partenza e il punto di arrivo, quindi stampo un messaggio per indicare che non è stato trovato alcun percorso
+    print("Nessun percorso disponibile tra partenza e arrivo.") # stampo un messaggio per indicare che non è stato trovato alcun percorso valido tra il punto di partenza e il punto di arrivo, probabilmente a causa della presenza di ostacoli che bloccano tutte le possibili vie di accesso.
+
+visualizza_percorso(matrice, percorso, start, end)
