@@ -1,7 +1,7 @@
 # LIBRERIE
-import random
-import matplotlib.pyplot as plt
-import numpy as np
+import random # importo la libreria random per generare numeri casuali, che sarà utilizzata per creare la matrice con ostacoli generati casualmente in base alla probabilità specificata
+import matplotlib.pyplot as plt # importo la libreria matplotlib.pyplot per visualizzare graficamente la matrice con il percorso trovato
+import numpy as np # importo la libreria numpy per manipolare array e matrici, utilizzando l'alias np per semplificare la sintassi
 
 
 # FUNZIONI
@@ -73,42 +73,39 @@ def bfs_lista(matrice, start, end): # funzione per eseguire la ricerca in ampiez
     return None  # se la coda si svuota senza trovare il nodo di arrivo, restituisco None per indicare che non esiste un percorso da start a end
 
 def visualizza_percorso(matrice, percorso, start, end):
-    """
-    Visualizza graficamente la matrice con il percorso trovato,
-    con start/end in viola e percorso in lilla.
-    """
-    N = len(matrice)
-    array = np.array(matrice)
+
+    N = len(matrice) # ottengo la dimensione della matrice
+    array = np.array(matrice) # converto la matrice in un array numpy per facilitare la manipolazione e la visualizzazione grafica
 
     # Creo un array RGB per i colori
-    colori = np.zeros((N, N, 3))
-    for r in range(N):
-        for c in range(N):
-            if array[r, c] == 1:
+    colori = np.zeros((N, N, 3)) # inizializzo un array di zeri con dimensioni (N, N, 3) per rappresentare i colori RGB di ogni cella della matrice, dove N è la dimensione della matrice e 3 rappresenta i canali di colore (rosso, verde, blu)
+    for r in range(N): # ciclo for per ogni riga della matrice
+        for c in range(N): # ciclo for per ogni colonna della matrice
+            if array[r, c] == 1: # se la cella corrispondente alla posizione (r, c) è un ostacolo (1)
                 colori[r, c] = [0, 0, 0]      # nero = ostacolo
-            else:
+            else: # se la cella corrispondente alla posizione (r, c) è libera (0)
                 colori[r, c] = [1, 1, 1]      # bianco = cella libera
 
     # Evidenzio il percorso in lilla
-    if percorso:
-        for r, c in percorso:
-            if (r, c) != start and (r, c) != end:
-                colori[r, c] = [0.8, 0.6, 1]  # lilla
+    if percorso: # se esiste un percorso valido (cioè percorso non è None), evidenzio le celle del percorso in lilla
+        for r, c in percorso: # ciclo for per ogni coppia di coordinate (r, c) nel percorso trovato
+            if (r, c) != start and (r, c) != end: # se la cella del percorso non è il punto di partenza e non è il punto di arrivo, evidenzio la cella del percorso in lilla
+                colori[r, c] = [0.8, 0.6, 1]  # lilla = percorso
 
     # Evidenzio start e end in viola
-    colori[start[0], start[1]] = [0.6, 0, 0.6]  # viola
-    colori[end[0], end[1]] = [0.6, 0, 0.6]      # viola
+    colori[start[0], start[1]] = [0.6, 0, 0.6]  # viola = start
+    colori[end[0], end[1]] = [0.6, 0, 0.6]      # viola = end
 
     # Visualizzazione
-    plt.figure(figsize=(8,8))
-    plt.imshow(colori, origin='upper')
+    plt.figure(figsize=(8,8)) # creo una figura di dimensioni 8x8 pollici per visualizzare la matrice con il percorso trovato
+    plt.imshow(colori, origin='upper') # visualizzo l'array dei colori utilizzando la funzione imshow di Matplotlib, con l'origine in alto a sinistra (origin='upper') per far corrispondere le coordinate della matrice alla visualizzazione grafica
 
     # Griglia e dettagli estetici
-    plt.xticks(range(N))
-    plt.yticks(range(N))
-    plt.grid(color='gray', linestyle='-', linewidth=1)
-    plt.title("Percorso trovato", fontsize=16)
-    plt.show()
+    plt.xticks(range(N)) # imposto i tick dell'asse x per mostrare le coordinate delle colonne da 0 a N-1
+    plt.yticks(range(N)) # imposto i tick dell'asse y per mostrare le coordinate delle righe da 0 a N-1
+    plt.grid(color='gray', linestyle='-', linewidth=1) # aggiungo una griglia grigia con linee continue e spessore di 1 per migliorare la visibilità delle celle nella matrice
+    plt.title("Percorso trovato", fontsize=16) # aggiungo un titolo alla visualizzazione con il testo "Percorso trovato" e una dimensione del font di 16 per rendere chiaro che la visualizzazione mostra il percorso trovato tra il punto di partenza e il punto di arrivo nella matrice
+    plt.show() # mostro la visualizzazione grafica della matrice con il percorso trovato utilizzando la funzione show di Matplotlib, che apre una finestra con l'immagine generata
 
 
 # MAIN
