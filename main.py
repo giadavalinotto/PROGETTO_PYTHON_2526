@@ -151,7 +151,6 @@ def main():
 
     visualizza_percorso(matrice, percorso, start, end) # chiamo la funzione visualizza_percorso per visualizzare graficamente la matrice con il percorso trovato, passando la matrice, il percorso, il punto di partenza e il punto di arrivo come argomenti. La funzione utilizza Matplotlib per creare una rappresentazione visiva della matrice.
 
-g
 if __name__ == "__main__": # good practise che rende il codice riutilizzabile come modulo
     main() # chiama la funzione main() per eseguire il programma quando viene eseguito direttamente, ma permette anche di importare le funzioni in altri moduli senza eseguire il codice principale.
     #TODO: Eliminare i commenti superflui
