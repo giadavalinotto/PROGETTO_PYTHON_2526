@@ -41,5 +41,4 @@ def visualizza_percorso(matrice, percorso, start, end, algoritmo): # funzione pe
     plt.yticks(range(n)) # imposto i tick dell'asse y per mostrare le coordinate delle righe da 0 a N-1
     plt.grid(color='gray', linestyle='-', linewidth=1) # aggiungo una griglia grigia con linee continue e spessore di 1 per migliorare la visibilità delle celle nella matrice
     plt.title("Percorso trovato con " + algoritmo, fontsize=16) # aggiungo un titolo alla visualizzazione con il testo "Percorso trovato" e una dimensione del font di 16 per rendere chiaro che la visualizzazione mostra il percorso trovato tra il punto di partenza e il punto di arrivo nella matrice
-    plt.show() # mostro la visualizzazione grafica della matrice con il percorso trovato utilizzando la funzione show di Matplotlib, che apre una finestra con l'immagine generata
 
